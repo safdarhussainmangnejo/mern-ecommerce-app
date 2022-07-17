@@ -4,6 +4,7 @@ import isEmpty from 'validator/lib/isEmpty';
 import isEmail from 'validator/lib/isEmail';
 import equals from 'validator/lib/equals';
 import { showLoading } from "../Helper/loading";
+import { showErrorMsg, showSuccessMsg } from '../Helper/message';
 import { signup } from "../api/auth";
 const Signup =()=>{
 
@@ -70,26 +71,26 @@ const Signup =()=>{
 
 			setFormData({ ...formData, loading: true });
 
-			// signup(data)
-			// 	.then(response => {
-			// 		console.log('Axios signup success: ', response);
-			// 		setFormData({
-			// 			username: '',
-			// 			email: '',
-			// 			password: '',
-			// 			password2: '',
-			// 			loading: false,
-			// 			successMsg: response.data.successMessage,
-			// 		});
-			// 	})
-			// 	.catch(err => {
-			// 		console.log('Axios signup error: ', err);
-			// 		setFormData({
-			// 			...formData,
-			// 			loading: false,
-			// 			errorMsg: err.response.data.errorMessage,
-			// 		});
-			// 	});
+			signup(data)
+				.then(response => {
+					console.log('Axios signup success: ', response);
+					setFormData({
+						username: '',
+						email: '',
+						password: '',
+						password2: '',
+						loading: false,
+						successMsg: response.data.successMessage,
+					});
+				})
+				.catch(err => {
+					console.log('Axios signup error: ', err);
+					setFormData({
+						...formData,
+						loading: false,
+						errorMsg: err.response.data.errorMessage,
+					});
+				});
 		}
 	};
 
@@ -182,11 +183,11 @@ const Signup =()=>{
 		<div className='signup-container'>
 			<div className='row px-3 vh-100'>
 				<div className='col-md-5 mx-auto align-self-center'>
-					{/* {successMsg && showSuccessMsg(successMsg)}
+					{successMsg && showSuccessMsg(successMsg)}
 					{errorMsg && showErrorMsg(errorMsg)}
 					{loading && (
 						<div className='text-center pb-4'>{showLoading()}</div>
-					)} */}
+					)}
 					{showSignupForm()}
 					{/* <p style={{ color: 'white' }}>{JSON.stringify(formData)}</p> */}
 				</div>
