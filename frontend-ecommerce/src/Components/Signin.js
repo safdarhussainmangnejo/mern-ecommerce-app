@@ -1,10 +1,24 @@
 
-import {Link } from "react-router-dom";
+import {Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import isEmpty from 'validator/lib/isEmpty';
 import isEmail from 'validator/lib/isEmail';
+import { setAuthentication, isAuthenticated } from '../Helper/auth';
+import { showLoading } from "../Helper/loading";
+import { showErrorMsg } from '../Helper/message';
 import { signin } from "../api/auth";
 const Signin =()=>{
+
+	let navigate = useNavigate();
+	let location = useLocation();
+
+	// useEffect(() => {
+	// 	if (isAuthenticated() && isAuthenticated().role === 1) {
+	// 		navigate('/admin/dashboard');
+	// 	} else if (isAuthenticated() && isAuthenticated().role === 0) {
+	// 		navigate('/user/dashboard');
+	// 	}
+	// }, [navigate]);
 
     const [formData, setFormData] = useState({
 		email: 'jdoe@gmail.com',
@@ -46,34 +60,34 @@ const Signin =()=>{
 
 			setFormData({ ...formData, loading: true });
 
-			// signin(data)
-			// 	.then(response => {
-			// 		setAuthentication(response.data.token, response.data.user);
-			// 		const redirect = location.search.split('=')[1];
+			signin(data)
+				.then(response => {
+					setAuthentication(response.data.token, response.data.user);
+					const redirect = location.search.split('=')[1];
 
-			// 		if (isAuthenticated() && isAuthenticated().role === 1) {
-			// 			console.log('Redirecting to admin dashboard');
-			// 			navigate('/admin/dashboard');
-			// 		} else if (
-			// 			isAuthenticated() &&
-			// 			isAuthenticated().role === 0 &&
-			// 			!redirect
-			// 		) {
-			// 			console.log('Redirecting to user dashboard');
-			// 			navigate('/user/dashboard');
-			// 		} else {
-			// 			console.log('Redirecting to shipping');
-			// 			navigate('/shipping');
-			// 		}
-			// 	})
-			// 	.catch(err => {
-			// 		console.log('signin api function error: ', err);
-			// 		setFormData({
-			// 			...formData,
-			// 			loading: false,
-			// 			errorMsg: err.response.data.errorMessage,
-			// 		});
-			// 	});
+					if (isAuthenticated() && isAuthenticated().role === 1) {
+						console.log('Redirecting to admin dashboard');
+						navigate('/admin/dashboard');
+					} else if (
+						isAuthenticated() &&
+						isAuthenticated().role === 0 &&
+						!redirect
+					) {
+						console.log('Redirecting to user dashboard');
+						navigate('/user/dashboard');
+					} else {
+						console.log('Redirecting to shipping');
+						navigate('/shipping');
+					}
+				})
+				.catch(err => {
+					console.log('signin api function error: ', err);
+					setFormData({
+						...formData,
+						loading: false,
+						errorMsg: err.response.data.errorMessage,
+					});
+				});
 		}
 	};
 
@@ -135,10 +149,10 @@ const Signin =()=>{
 		<div className='signin-container'>
 			<div className='row px-3 vh-100'>
 				<div className='col-md-5 mx-auto align-self-center'>
-					{/* {errorMsg && showErrorMsg(errorMsg)}
+					{errorMsg && showErrorMsg(errorMsg)}
 					{loading && (
 						<div className='text-center pb-4'>{showLoading()}</div>
-					)} */}
+					)}
 					{showSigninForm()}
 				</div>
 			</div>

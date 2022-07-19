@@ -4,7 +4,6 @@ const { signupController, signinController, displayUsersController } = require('
 
 router.post('/signup', signupController);
 router.post('/signin', signinController);
-router.get('/signup', signupController);
 router.get('/users', displayUsersController);
 
 module.exports = router;

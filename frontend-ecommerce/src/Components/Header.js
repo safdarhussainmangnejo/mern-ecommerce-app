@@ -1,35 +1,155 @@
-import {Link } from "react-router-dom"
-const Header = () =>{
+import React, { Fragment } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { isAuthenticated, logout } from '../Helper/auth';
+import { useSelector } from 'react-redux';
 
-    // views
-	return(
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-            </button>
-            <Link className="navbar-brand" to="/">Logo</Link>
+const Header = () => {
+	let navigate = useNavigate();
+	// const { cart } = useSelector(state => state.cart);
 
-            <form className="form-inline my-2 my-lg-0 ml-auto">
-                <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
-                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
-                <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
-                <li className="nav-item active">
-                    <Link className="nav-link" to="/">Home <span className="sr-only">(current)</span></Link>
-                </li>
-                <li className="nav-item">
-                    <Link className="nav-link" to="/signup">Signup</Link>
-                </li>
-                <li className="nav-item">
-                    <Link className="nav-link" to="/signin">Signin</Link>
-                </li>
-                </ul>
-                
-            </div>
-        </nav>
-);
+	const handleLogout = evt => {
+		logout(() => {
+			navigate('/signin');
+		});
+	};
 
+	// views
+	const showNavigation = () => (
+		<nav className='navbar navbar-expand-lg navbar-light bg-light'>
+			<Link to='/' className='navbar-brand'>
+				Logo
+			</Link>
+			<button
+				className='navbar-toggler'
+				type='button'
+				data-toggle='collapse'
+				data-target='#navbarTogglerDemo02'
+				aria-controls='navbarTogglerDemo02'
+				aria-expanded='false'
+				aria-label='Toggle navigation'
+			>
+				<span className='navbar-toggler-icon'></span>
+			</button>
+
+			<div className='collapse navbar-collapse' id='navbarTogglerDemo02'>
+				<ul className='navbar-nav ml-auto mt-2 mt-lg-0'>
+					{!isAuthenticated() && (
+						<Fragment>
+							<li className='nav-item'>
+								<Link to='/' className='nav-link'>
+									<i className='fas fa-home'></i> Home
+								</Link>
+							</li>
+							<li className='nav-item'>
+								<Link to='/shop' className='nav-link'>
+									<i className='fas fa-shopping-bag'></i> Shop
+								</Link>
+							</li>
+							{/* <li
+								className='nav-item mr-2'
+								style={{ position: 'relative' }}
+							>
+								<Link to='/cart' className='nav-link'>
+									<i className='fas fa-shopping-cart'></i>{' '}
+									Cart{' '}
+									<span
+										className='badge badge-danger'
+										style={{
+											position: 'absolute',
+											top: '0px',
+										}}
+									>
+										{cart.length}
+									</span>
+								</Link>
+							</li> */}
+							<li className='nav-item'>
+								<Link to='/signup' className='nav-link'>
+									<i className='fas fa-edit'></i> Signup
+								</Link>
+							</li>
+							<li className='nav-item'>
+								<Link to='/signin' className='nav-link'>
+									<i className='fas fa-sign-in-alt'></i>{' '}
+									Signin
+								</Link>
+							</li>
+						</Fragment>
+					)}
+
+					{isAuthenticated() && isAuthenticated().role === 0 && (
+						<Fragment>
+							<li className='nav-item'>
+								<Link to='/user/dashboard' className='nav-link'>
+									<i className='fas fa-user-cog'></i>{' '}
+									Dashboard
+								</Link>
+							</li>
+							<li className='nav-item'>
+								<Link to='/' className='nav-link'>
+									<i className='fas fa-home'></i> Home
+								</Link>
+							</li>
+							<li className='nav-item'>
+								<Link to='/shop' className='nav-link'>
+									<i className='fas fa-shopping-bag'></i> Shop
+								</Link>
+							</li>
+							{/* <li
+								className='nav-item mr-2'
+								style={{ position: 'relative' }}
+							>
+								<Link to='/cart' className='nav-link'>
+									<i className='fas fa-shopping-cart'></i>{' '}
+									Cart{' '}
+									<span
+										className='badge badge-danger'
+										style={{
+											position: 'absolute',
+											top: '0px',
+										}}
+									>
+										{cart.length}
+									</span>
+								</Link>
+							</li> */}
+						</Fragment>
+					)}
+
+					{isAuthenticated() && isAuthenticated().role === 1 && (
+						<Fragment>
+							<li className='nav-item'>
+								<Link
+									to='/admin/dashboard'
+									className='nav-link'
+								>
+									<i className='fas fa-user-cog'></i>{' '}
+									Dashboard
+								</Link>
+							</li>
+						</Fragment>
+					)}
+
+					{isAuthenticated() && (
+						<Fragment>
+							<li className='nav-item'>
+								<button
+									className='btn btn-link text-secondary text-decoration-none pl-0'
+									onClick={handleLogout}
+								>
+									<i className='fas fa-sign-out-alt'></i>{' '}
+									Logout
+								</button>
+							</li>
+						</Fragment>
+					)}
+				</ul>
+			</div>
+		</nav>
+	);
+
+	// render
+	return <header id='header'>{showNavigation()}</header>;
 };
 
 export default Header;
